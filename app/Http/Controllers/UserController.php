@@ -14,6 +14,73 @@ use App\Models\Client\ReplyReviewBooks;
 
 class UserController extends Controller
 {
+    public function Welcome(){
+        $books = Books::with('reviews')->get();
+        $genres = GenresBook::all();
+        $discusses = DiscussBooks::all();
+        $reviewses = ReviewBooks::all();
+
+        $startDate = Carbon::now()->subWeek();
+        $endDate = Carbon::now();
+
+        $booksOfWeek = Books::with([
+            'reviews' => function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            },
+            'reviews.repliesReviewBooks' => function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            }
+        ])
+        ->whereHas('reviews', function ($query) use ($startDate, $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        })
+        ->get()
+        ->each(function ($book) {
+            $book->review_count = $book->reviews->count();
+            $book->reply_count = $book->reviews->sum(function ($review) {
+                return $review->repliesReviewBooks->count();
+            });
+        });
+
+        $authorsOfWeek = AuthorsBook::with(['books.reviews' => function ($query) use ($startDate, $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+            // Hanya mengambil review yang dibuat dalam jangka waktu tertentu
+        }, 'books.reviews.repliesReviewBooks' => function ($query) use ($startDate, $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+            // Hanya mengambil balasan yang dibuat dalam jangka waktu tertentu
+        }])->whereHas('books.reviews', function ($query) use ($startDate, $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+            // Hanya mengambil penulis dengan buku yang memiliki review dalam jangka waktu tertentu
+        })->get();
+
+        // Menghitung total review dan balasan untuk setiap penulis
+        $authorsOfWeek->each(function ($author) {
+            $totalReviews = 0;
+            $totalReplies = 0;
+
+            foreach ($author->books as $book) {
+                $totalReviews += $book->reviews->count();
+                $totalReplies += $book->reviews->sum(function ($review) {
+                    return optional($review->repliesReviewBooks)->count() ?? 0;
+                });
+            }
+
+            $author->totalReviews = $totalReviews;
+            $author->totalReplies = $totalReplies;
+        });
+
+        foreach ($books as $book) {
+            $totalReviews = $book->reviews->count();
+            $averageRating = $totalReviews > 0 ? $book->reviews->avg('reviewRates') : 0;
+            $book->averageRating = $averageRating;
+        }
+        foreach($discusses as $discuss){
+            $totalReplyDiscuss = $discuss->replyDiscuss->count();
+            $discuss->totalReply = $totalReplyDiscuss;
+        }
+        return view('welcome', compact('books','genres','discusses', 'reviewses','booksOfWeek','authorsOfWeek'));
+    }
+
     public function Dashboard(){
         $books = Books::with('reviews')->get();
         $genres = GenresBook::all();

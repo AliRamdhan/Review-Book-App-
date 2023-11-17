@@ -7,25 +7,25 @@
             </div>
 
             <div class="w-full flex justify-center items-center py-4 border-b border-black">
-                <form class="w-full rounded-lg" action="{{ route('post.discuss') }}" method="POST">
+                <form id="discussForm" class="w-full rounded-lg" action="{{ route('post.discuss') }}" method="POST">
                     @csrf
                     <div class="flex flex-col pb-4">
                         <div class="w-full flex justify-center px-2">
                             <div class="w-14 h-14">
-                                <img src="{{ asset('image/buku2.jpg') }}" alt="image"
+                                <img src="{{ asset('image/user.jpg') }}" alt="image"
                                     class="w-full h-full rounded-full border border-black">
                             </div>
                             <div class="w-full px-4 mb-2">
                                 <textarea
                                     class="bg-gray-100 rounded border border-gray-400 leading-normal resize-none w-full font-medium placeholder-gray-700 focus:outline-none focus:bg-white p-2"
-                                    name="discussMessage" placeholder='Type Your Comment' rows="4" required></textarea>
+                                    name="discussMessage" placeholder='Type Your What are you think' rows="4" required></textarea>
                             </div>
                         </div>
                         <div class="w-full flex justify-between px-5">
                             <div></div>
                             <button type="submit"
                                 class="bg-white text-gray-700 font-medium py-1 px-4 border border-gray-400 rounded-lg tracking-wide mr-1 hover:bg-gray-100">Post
-                                Comment</button>
+                                Opinion</button>
                         </div>
                     </div>
                 </form>
@@ -37,8 +37,7 @@
                             <div class="flex">
                                 <div class="flex-shrink-0 mr-3">
                                     <img class="mt-2 rounded-full w-8 h-8 sm:w-10 sm:h-10"
-                                        src="https://images.unsplash.com/photo-1604426633861-11b2faead63c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=80"
-                                        alt="">
+                                        src="{{ asset('image/user.jpg') }}" alt="">
                                 </div>
                                 <div class="flex-1 px-4 py-2 leading-relaxed">
                                     <strong>{{ $discuss->userDiscuss->name }}</strong> <span
@@ -55,8 +54,7 @@
                                                 style=" display: -webkit-box; -webkit-box-orient: horizontal; -webkit-line-clamp: 1;overflow: hidden;">
                                                 @for ($i = 0; $i < $discuss->replyDiscuss->count(); $i++)
                                                     <img class="rounded-full w-6 h-6 border border-white"
-                                                        src="https://images.unsplash.com/photo-1554151228-14d9def656e4?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
-                                                        alt="">
+                                                        src="{{ asset('image/user.jpg') }}" alt="">
                                                 @endfor
                                             </div>
                                             <div class="text-sm text-gray-500 font-semibold mr-2">
@@ -71,7 +69,7 @@
                                                 </svg>
                                             </div>
                                         </div>
-                                        <div class="flex items-center">
+                                        {{-- <div class="flex items-center">
                                             <div
                                                 class="w-8 group flex items-center text-gray-500 text-base leading-6 font-medium rounded-full cursor-pointer ">
                                                 <svg class="text-center h-7 w-6" fill="none" stroke-linecap="round"
@@ -85,43 +83,52 @@
                                             <div class="text-sm text-gray-500 font-semibold mr-2">
                                                 5 Likes
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                     <!-- Reply Review Book -->
                                     <div class="space-y-4 hidden menuReply transition duration-800">
                                         <h4 class="my-5 uppercase tracking-wide text-gray-400 font-bold text-xs">
                                             Replies</h4>
                                         <div class="w-full max-h-[350px] overflow-hidden">
-                                            @foreach ($discuss->replyDiscuss as $index => $reply)
-                                                <div class="flex my-2">
-                                                    <div class="flex-shrink-0 mr-3">
-                                                        <img class="mt-3 rounded-full w-6 h-6 sm:w-8 sm:h-8"
-                                                            src="https://images.unsplash.com/photo-1604426633861-11b2faead63c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=80"
-                                                            alt="">
+                                            @if ($discuss->replyDiscuss->count() > 0)
+                                                @foreach ($discuss->replyDiscuss as $index => $reply)
+                                                    <div class="flex my-2">
+                                                        <div class="flex-shrink-0 mr-3">
+                                                            <img class="mt-3 rounded-full w-6 h-6 sm:w-8 sm:h-8"
+                                                                src="{{ asset('image/user.jpg') }}" alt="">
+                                                        </div>
+                                                        <div class="flex-1 rounded-lg px-4 py-2 leading-relaxed">
+                                                            <strong>{{ $reply->users->name }}</strong> <span
+                                                                class="text-xs text-gray-400 mx-2">{{ $reply->created_at->diffForHumans() }}</span>
+                                                            <p class="text-sm">
+                                                                {{ $reply->replyText }}
+                                                            </p>
+                                                        </div>
                                                     </div>
-                                                    <div class="flex-1 rounded-lg px-4 py-2 leading-relaxed">
-                                                        <strong>{{ $reply->users->name }}</strong> <span
-                                                            class="text-xs text-gray-400 mx-2">{{ $reply->created_at->diffForHumans() }}</span>
-                                                        <p class="text-sm">
-                                                            {{ $reply->replyText }}
-                                                        </p>
-                                                    </div>
+                                                @endforeach
+                                                <div class="w-full text-right text-blue-500 px-4">
+                                                    <!--Details-->
+                                                    <a href="#">See more</a>
                                                 </div>
-                                            @endforeach
-                                        </div>
-                                        <div class="w-full text-right text-blue-500 px-4">
-                                            <!--Details-->
-                                            <a href="#">See more</a>
+                                            @else
+                                                <div> no replies yet</div>
+                                            @endif
                                         </div>
                                         <div>
-                                            <form action="#" method="POST">
+                                            <form
+                                                action="{{ route('post.reply.discuss', ['discussId' => $discuss->discuss_id]) }}"
+                                                method="POST">
                                                 @csrf
                                                 <div class="w-full pl-14 mb-2">
                                                     <textarea
                                                         class="bg-gray-100 rounded border border-gray-400 leading-normal resize-none w-full font-medium rounded-lg placeholder-gray-700 focus:outline-none focus:bg-white p-2"
-                                                        name="reviewText" placeholder='Type Your Comment' rows="2" required></textarea>
+                                                        name="replyText" placeholder='Type Your Comment' rows="2" required></textarea>
                                                 </div>
-                                                <button type="submit">submit</button>
+                                                <div class="w-full flex justify-end items-center">
+                                                    <button type="submit"
+                                                        class="bg-white text-gray-700 font-medium py-0.5 px-3 border border-gray-400 rounded-lg tracking-wide hover:bg-gray-100">Post
+                                                        Replies</button>
+                                                </div>
                                             </form>
                                         </div>
                                     </div>
@@ -209,3 +216,18 @@
         </div>
     </div>
 </x-client-layout>
+
+<script>
+    function confirmDelete() {
+        var result = confirm("Are you sure you want to delete this review?");
+        if (result) {
+            document.getElementById('deleteReviewForm').submit();
+        }
+    }
+    document.getElementById('discussForm').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            submitForm();
+        }
+    });
+</script>

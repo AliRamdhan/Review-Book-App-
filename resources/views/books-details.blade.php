@@ -1,17 +1,15 @@
 <x-client-layout>
     @if ($book)
-
         <div class="w-full flex justify-between min-h-screen">
             <div class="w-2/6 h-screen flex flex-col pt-4">
-                {{ $book->book_id }}
                 <div class="w-full text-lg text-gray-500 px-4 py-4 flex items-center gap-4"> E-book <span
                         class="w-2 h-2 mx-1.5 bg-gray-500 rounded-full dark:bg-gray-400"></span>{{ $book->bookPages }}
                     pages
                 </div>
-                <div class="w-full flex justify-end pt-2">
+                <div class="w-full flex justify-end pt-2 relative z-20">
                     <img src="{{ asset('image/buku1.jpg') }}" alt="images"
                         style="background-size: cover; object-position: center center;"
-                        class="w-80 h-[400px] border border-black absolute left-40 bg-white">
+                        class="w-80 h-[400px] border border-black -mr-48">
                 </div>
                 <div class="flex flex-col w-64 h-4/5 flex justify-end pb-8 px-4">
                     <div class="flex flex-row">
@@ -26,7 +24,7 @@
                     </div>
                 </div>
             </div>
-            <div class="w-full flex flex-col items-center border border-black py-4">
+            <div class="w-full flex flex-col items-center border-2 py-4">
                 <div class="w-full px-8 text-3xl font-bold">{{ $book->bookTitle }}</div>
                 <div class="w-full flex items-center gap-2 px-16">by <span
                         class="text-left font-semibold">{{ $book->author->authorName }}</span>
@@ -69,7 +67,7 @@
                     <p class="text-sm font-semibold text-gray-900"><span> {{ $totalReview }} </span>
                         reviews</p>
                 </div>
-                <div class="w-full pl-36 mt-8">
+                <div class="w-full pl-52 mt-8">
                     <div>
                         <div class="font-bold text-xl">Synopsis</div>
                         <div class="text-gray-700 my-2">
@@ -109,27 +107,35 @@
                         </div>
                         <div class="h-14 p-2 flex flex-col justify-between items-center ">
                             <div>Language</div>
-                            <div class="font-semibold text-base">dsadas</div>
+                            <div class="font-semibold text-base">
+                                @foreach ($book->languages as $index => $language)
+                                    <span>{{ $language->languageName }}</span>
+                                    {{ $index < count($book->languages) - 1 ? ', ' : '' }}
+                                @endforeach
+                            </div>
                         </div>
                         <div class="h-14 p-2 flex flex-col justify-between items-center ">
                             <div>Publisher</div>
-                            <div class="font-semibold text-base">dsadas</div>
+                            <div class="font-semibold text-base">{{ $book->publisher->publisherName }}</div>
                         </div>
                         <div class="h-14 p-2 flex flex-col justify-between items-center ">
                             <div>Release date</div>
-                            <div class="font-semibold text-base">dsadas</div>
+                            <div class="font-semibold text-base">date</div>
                         </div>
                         <div class="h-14 p-2 flex flex-col justify-between items-center ">
                             <div>ISBN</div>
-                            <div class="font-semibold text-base">dsadas</div>
+                            <div class="font-semibold text-base">ISBN 817525766-0</div>
                         </div>
                         <div class="h-14 p-2 flex flex-col justify-between items-center ">
                             <div>Format</div>
-                            <div class="font-semibold text-base">dsadas</div>
+                            <div class="font-semibold text-base">kindle</div>
                         </div>
                         <div class="h-14 p-2 flex flex-col justify-between items-center ">
                             <div>Features</div>
-                            <div class="font-semibold text-base">dsadas</div>
+                            <div class="font-semibold text-base">
+                                Sastra
+                                {{-- gaya bahasa sastra, bercerita atau bertutur (story telling) --}}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -277,20 +283,20 @@
                     </div>
                 </div>
                 <div class="w-full mt-4 border-t border-black ">
-                    <div class="w-full px-4">
-                        <form class="w-full rounded-lg pt-4"
+                    <div role="form" class="w-full px-4">
+                        <form id="commentForm" class="w-full rounded-lg pt-4"
                             action="{{ route('post.book.review', ['bookId' => $book->book_id]) }}" method="POST">
                             @csrf
                             <div class="flex flex-col">
                                 <div class="w-full flex justify-center px-2">
                                     <div class="w-14 h-14">
-                                        <img src="{{ asset('image/buku2.jpg') }}" alt="image"
+                                        <img src="{{ asset('image/user.jpg') }}" alt="profile"
                                             class="w-full h-full rounded-full border border-black">
                                     </div>
                                     <div class="w-full px-4 mb-2">
                                         <textarea
                                             class="bg-gray-100 rounded border border-gray-400 leading-normal resize-none w-full font-medium placeholder-gray-700 focus:outline-none focus:bg-white p-2"
-                                            name="reviewText" placeholder='Type Your Comment' rows="4" required></textarea>
+                                            name="reviewText" placeholder='Type Your opinion about the book' rows="4" required></textarea>
                                     </div>
                                 </div>
                                 <div class="w-full flex gap-4 px-20 ">
@@ -312,7 +318,7 @@
                                     <div></div>
                                     <button type="submit"
                                         class="bg-white text-gray-700 font-medium py-1 px-4 border border-gray-400 rounded-lg tracking-wide mr-1 hover:bg-gray-100">Post
-                                        Comment</button>
+                                        Review</button>
                                 </div>
                             </div>
                         </form>
@@ -324,14 +330,14 @@
                                         <div class="flex">
                                             <div class="flex-shrink-0 mr-3">
                                                 <img class="mt-2 rounded-full w-8 h-8 sm:w-10 sm:h-10"
-                                                    src="https://images.unsplash.com/photo-1604426633861-11b2faead63c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=80"
-                                                    alt="">
+                                                    src="{{ asset('image/user.jpg') }}" alt="profile">
                                             </div>
 
                                             <div class="flex-1 px-4 py-2 leading-relaxed">
                                                 <strong>{{ $review->userReviewBooks->name }}</strong> <span
-                                                    class="text-xs text-gray-400 mx-2">3:34
-                                                    PM</span>
+                                                    class="text-xs text-gray-400 mx-2">
+                                                    {{ \Carbon\Carbon::parse($review->created_at)->format('g:i A') }}
+                                                </span>
                                                 <span>
                                                     @php
                                                         $reviewRates = $review->reviewRates ?? 0; // Default to 0 if null
@@ -366,12 +372,11 @@
                                                     buttonReply cursor-pointer">
                                                         @if ($review->replyReviews->count() > 0)
                                                             <div class="flex -space-x-2 mr-2">
-                                                                <img class="rounded-full w-6 h-6 border border-white"
-                                                                    src="https://images.unsplash.com/photo-1554151228-14d9def656e4?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
-                                                                    alt="">
-                                                                <img class="rounded-full w-6 h-6 border border-white"
-                                                                    src="https://images.unsplash.com/photo-1513956589380-bad6acb9b9d4?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
-                                                                    alt="">
+                                                                @for ($i = 0; $i < $review->replyReviews->count(); $i++)
+                                                                    <img class="rounded-full w-6 h-6 border border-white"
+                                                                        src="{{ asset('image/user.jpg') }}"
+                                                                        alt="">
+                                                                @endfor
                                                             </div>
 
                                                             <div class="text-sm text-gray-500 font-semibold mr-2">
@@ -393,22 +398,6 @@
                                                             </svg>
                                                         </div>
                                                     </div>
-                                                    <div class="flex items-center">
-                                                        <div
-                                                            class="w-8 group flex items-center text-gray-500 text-base leading-6 font-medium rounded-full cursor-pointer ">
-                                                            <svg class="text-center h-7 w-6" fill="none"
-                                                                stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2" stroke="currentColor"
-                                                                viewBox="0 0 24 24">
-                                                                <path
-                                                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
-                                                                </path>
-                                                            </svg>
-                                                        </div>
-                                                        <div class="text-sm text-gray-500 font-semibold mr-2">
-                                                            5 Likes
-                                                        </div>
-                                                    </div>
                                                 </div>
 
                                                 <!-- Reply Review Book -->
@@ -417,37 +406,44 @@
                                                         class="my-5 uppercase tracking-wide text-gray-400 font-bold text-xs">
                                                         Replies</h4>
                                                     <div class="w-full max-h-[400px] overflow-y-auto">
-
                                                         @foreach ($review->replyReviews as $replyReview)
-                                                            <div></div>
-                                                            <div class="flex my-2">
-                                                                <div class="flex-shrink-0 mr-3">
-                                                                    <img class="mt-3 rounded-full w-6 h-6 sm:w-8 sm:h-8"
-                                                                        src="https://images.unsplash.com/photo-1604426633861-11b2faead63c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=80"
-                                                                        alt="">
+                                                            <div class="w-full flex justify-between items-center">
+                                                                <div class="flex my-2">
+                                                                    <div class="flex-shrink-0 mr-3">
+                                                                        <img class="mt-3 rounded-full w-6 h-6 sm:w-8 sm:h-8"
+                                                                            src="{{ asset('image/user.jpg') }}"
+                                                                            alt="">
+                                                                    </div>
+                                                                    <div
+                                                                        class="flex-1 rounded-lg px-4 py-2 leading-relaxed">
+                                                                        <strong>{{ $replyReview->userReplyReviewBooks->name }}</strong>
+                                                                        <span class="text-xs text-gray-400">
+                                                                            {{ \Carbon\Carbon::parse($replyReview->created_at)->format('g:i A') }}</span>
+                                                                        <p class="text-xs sm:text-sm">
+                                                                            {{ $replyReview->replysText }}
+                                                                        </p>
+                                                                    </div>
                                                                 </div>
-                                                                <div
-                                                                    class="flex-1 rounded-lg px-4 py-2 leading-relaxed">
-                                                                    <strong>{{ $replyReview->userReplyReviewBooks->name }}</strong>
-                                                                    <span class="text-xs text-gray-400">3:34
-                                                                        PM</span>
-                                                                    <p class="text-xs sm:text-sm">
-                                                                        {{ $replyReview->replysText }}
-                                                                    </p>
+                                                                <div>
+                                                                    @if ($replyReview->replysUser == Auth::user()->id)
+                                                                        <form id="deleteReviewForm"
+                                                                            action="{{ route('delete.book.reply.review', ['replyId' => $replyReview->replys_id, 'userId' => $replyReview->replysUser, 'bookId' => $book->book_id]) }}"
+                                                                            method="POST">
+                                                                            @csrf
+                                                                            @method('DELETE')
+                                                                            <button type="button"
+                                                                                onclick="confirmDelete()"><svg
+                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                    height="1em"
+                                                                                    viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                                                                                    <path
+                                                                                        d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z" />
+                                                                                </svg></button>
+                                                                        </form>
+                                                                    @else
+                                                                        <div></div>
+                                                                    @endif
                                                                 </div>
-                                                            </div>
-                                                            <div>
-                                                                @if ($replyReview->replysUser == Auth::user()->id)
-                                                                    <form
-                                                                        action="{{ route('delete.book.reply.review', ['replyId' => $replyReview->replys_id, 'userId' => $replyReview->replysUser, 'bookId' => $book->book_id]) }}"
-                                                                        method="POST">
-                                                                        @csrf
-                                                                        @method('DELETE')
-                                                                        <button type="submit">Delete</button>
-                                                                    </form>
-                                                                @else
-                                                                    <div></div>
-                                                                @endif
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -459,9 +455,13 @@
                                                             <div class="w-full pl-14 mb-2">
                                                                 <textarea
                                                                     class="bg-gray-100 rounded border border-gray-400 leading-normal resize-none w-full font-medium rounded-lg placeholder-gray-700 focus:outline-none focus:bg-white p-2"
-                                                                    name="replysText" placeholder='Type Your Comment' rows="2" required></textarea>
+                                                                    name="replysText" placeholder='Type Your Reply of review ' rows="2" required></textarea>
                                                             </div>
-                                                            <button type="submit">submit</button>
+                                                            <div class="w-full flex justify-end items-center">
+                                                                <button type="submit"
+                                                                    class="bg-white text-gray-700 font-medium py-1 px-4 border border-gray-400 rounded-lg tracking-wide mr-1 hover:bg-gray-100">Reply
+                                                                    Review</button>
+                                                            </div>
                                                         </form>
                                                     </div>
                                                 </div>
@@ -479,3 +479,18 @@
         <div>book not found</div>
     @endif
 </x-client-layout>
+
+<script>
+    function confirmDelete() {
+        var result = confirm("Are you sure you want to delete this review?");
+        if (result) {
+            document.getElementById('deleteReviewForm').submit();
+        }
+    }
+    document.getElementById('commentForm').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            submitForm();
+        }
+    });
+</script>

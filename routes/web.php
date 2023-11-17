@@ -24,10 +24,10 @@ use App\Http\Controllers\Admin\PublishersBookController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
-
+// Route::get('/', function () {
+//     return view('welcome');
+// })->name('home');
+Route::get('/', [UserController::class,'Welcome'])->name('home');
 
 Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/admin/dashboard', [HomeController::class,'dashboard'])->name('dashboard.admin');

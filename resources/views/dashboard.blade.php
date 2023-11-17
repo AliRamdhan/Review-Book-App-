@@ -199,7 +199,7 @@
                                                 <div class="w-56 h-24">
                                                     <img class="w-full h-full"
                                                         src="{{ asset('storage/genre_image/' . $genre->genreImage) }}"
-                                                        alt="product image" />
+                                                        alt="genre image" />
                                                 </div>
                                             </div>
                                         </div>

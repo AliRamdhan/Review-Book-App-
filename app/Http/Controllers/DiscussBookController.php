@@ -67,7 +67,9 @@ class DiscussBookController extends Controller
             'replyText'=> $request->replyText,
         ]);
         $data->save();
-        return redirect()->route('community.details',$discuss->discussMessage)->with('success', 'Reply Discussion created successfully.');
+        // return redirect()->route('community.details',$discuss->discussMessage)->with('success', 'Reply Discussion created successfully.');
+        return back()->with('success', 'Reply Discussion created successfully.');
+
     }
 
     public function deleteReplyDiscuss($replyDiscussId, $discussId,$userId){
